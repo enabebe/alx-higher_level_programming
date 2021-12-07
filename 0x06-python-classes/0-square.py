@@ -1,7 +1,10 @@
 #!/usr/bin/python3
-"""Defines a class Square"""
+"""Module 0-square.py
+Contains empty class Square
+"""
 
 
 class Square:
-    """An empty Square class"""
-    pass)
+    """An empty class Square
+    This is an empty class to demonstrate how empty classes look like
+    """
