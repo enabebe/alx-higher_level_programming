@@ -1,78 +1,78 @@
-#!/usr/bin/env python3
-"""The n queens puzzle."""
-class NQueens:
-    """Generate all valid solutions for the n queens puzzle"""
-    def __init__(self, size):
-        # Store the puzzle (problem) size and the number of valid solutions
-        self.size = size
-        self.solutions = 0
-        self.solve()
+#!/usr/bin/env python2.7
 
-    def solve(self):
-        """Solve the n queens puzzle and print the number of solutions"""
-        positions = [-1] * self.size
-        self.put_queen(positions, 0)
-        print("Found", self.solutions, "solutions.")
+##############################################################################
+# a script to solve the n queen problem in which n queens are to be placed on
+# an nxn chess board in a way that none of the n queens is in check by any other
+#queen using backtracking'''
+##############################################################################
+import sys
+import time
+import array
 
-    def put_queen(self, positions, target_row):
-        """
-        Try to place a queen on target_row by checking all N possible cases.
-        If a valid place is found the function calls itself trying to place a queen
-        on the next row until all N queens are placed on the NxN board.
-        """
-        # Base (stop) case - all N rows are occupied
-        if target_row == self.size:
-            self.show_full_board(positions)
-            # self.show_short_board(positions)
-            self.solutions += 1
+solution_count = 0
+
+def queen(current_row, num_row, solution_list):
+    if current_row == num_row:
+        global solution_count 
+        solution_count = solution_count + 1
+    else:
+        current_row += 1
+        next_moves = gen_nextpos(current_row, solution_list, num_row + 1)
+        if next_moves:
+            for move in next_moves:
+                '''make a move on first legal move of next moves'''
+                solution_list[current_row] = move
+                queen(current_row, num_row, solution_list)
+                '''undo move made'''
+                solution_list[current_row] = 0
         else:
-            # For all N columns positions try to place a queen
-            for column in range(self.size):
-                # Reject all invalid positions
-                if self.check_place(positions, target_row, column):
-                    positions[target_row] = column
-                    self.put_queen(positions, target_row + 1)
+            return None
 
-
-    def check_place(self, positions, ocuppied_rows, column):
-        """
-        Check if a given position is under attack from any of
-        the previously placed queens (check column and diagonal positions)
-        """
-        for i in range(ocuppied_rows):
-            if positions[i] == column or \
-                positions[i] - i == column - ocuppied_rows or \
-                positions[i] + i == column + ocuppied_rows:
-
-                return False
-        return True
-
-    def show_full_board(self, positions):
-        """Show the full NxN board"""
-        for row in range(self.size):
-            line = ""
-            for column in range(self.size):
-                if positions[row] == column:
-                    line += "Q "
-                else:
-                    line += ". "
-            print(line)
-        print("\n")
-
-    def show_short_board(self, positions):
-        """
-        Show the queens positions on the board in compressed form,
-        each number represent the occupied column position in the corresponding row.
-        """
-        line = ""
-        for i in range(self.size):
-            line += str(positions[i]) + " "
-        print(line)
+def gen_nextpos(a_row, solution_list, arr_size):
+    '''function that takes a chess row number, a list of partially completed 
+    placements and the number of rows of the chessboard. It returns a list of
+    columns in the row which are not under attack from any previously placed
+    queen.
+    '''
+    cand_moves = []
+    '''check for each column of a_row which is not in check from a previously
+    placed queen'''
+    for column in range(1, arr_size):
+        under_attack =  False
+        for row in range(1, a_row):
+            '''
+            solution_list holds the column index for each row of which a 
+            queen has been placed  and using the fact that the slope of 
+            diagonals to which a previously placed queen can get to is 1 and
+            that the vertical positions to which a queen can get to have same 
+            column index, a position is checked for any threating queen
+            '''
+            if (abs(a_row - row) == abs(column - solution_list[row]) 
+                    or solution_list[row] == column):
+                under_attack = True
+                break
+        if not under_attack:
+            cand_moves.append(column)
+    return cand_moves
 
 def main():
-    """Initialize and solve the n queens puzzle"""
-    NQueens(8)
+    '''
+    main is the application which sets up the program for running. It takes an 
+    integer input,N, from the user representing the size of the chessboard and 
+    passes as input,0, N representing the chess board size and a solution list to
+    hold solutions as they are created.It outputs the number of ways N queens
+    can be placed on a board of size NxN.
+    '''
+    #board_size =  [int(x) for x in sys.stdin.readline().split()]
+    board_size = [15]
+    board_size = board_size[0]
+    solution_list = array.array('i', [0]* (board_size + 1))
+    #solution_list =  [0]* (board_size + 1)
+    queen(0, board_size, solution_list)
+    print(solution_count)
 
-if __name__ == "__main__":
-    # execute only if run as a script
+
+if __name__ == '__main__':
+    start_time = time.time()
     main()
+    print(time.time()
