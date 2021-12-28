@@ -45,4 +45,4 @@ models/ | Contains all the model files
 * All test files in located in /tests folder
 
 ## Author
-Heindrick Cheung
+Nathan Abebe
